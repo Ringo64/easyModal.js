@@ -128,14 +128,34 @@
                         o.onOpen($modal[0]);
                     }
                 });
+				
+				function whichAnimationEvent(){
+				  var t,
+					  el = document.createElement("fakeelement");
+
+				  var animations = {
+					"animation"      : "animationend",
+					"OAnimation"     : "oAnimationEnd",
+					"MozAnimation"   : "animationend",
+					"WebkitAnimation": "webkitAnimationEnd"
+				  }
+
+				  for (t in animations){
+					if (el.style[t] !== undefined){
+					  return animations[t];
+					}
+				  }
+				}
+				
+				var animationEvent = whichAnimationEvent();
 
                 $modal.bind('closeModal', function () {
                     if(o.transitionIn !== '' && o.transitionOut !== ''){
                         $modal.removeClass(o.transitionIn).addClass(o.transitionOut);
-                        $modal.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                            $modal.css('display', 'none');
+						$modal.one(animationEvent, function(event) {
+							$modal.css('display', 'none');
                             $overlay.css('display', 'none');
-                        });
+						  });
                     }
                     else {
                         $modal.css('display', 'none');
